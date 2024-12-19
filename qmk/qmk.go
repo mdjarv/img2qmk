@@ -10,16 +10,16 @@ import (
 	"path/filepath"
 )
 
-func ParseImage(path string, name string) error {
+func ImgToBytes(path string) ([]byte, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer f.Close()
 
 	img, _, err := image.Decode(f)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	bounds := img.Bounds()
@@ -41,6 +41,15 @@ func ParseImage(path string, name string) error {
 			}
 			data = append(data, byte(v))
 		}
+	}
+
+	return data, nil
+}
+
+func ParseImage(path string, name string) error {
+	data, err := ImgToBytes(path)
+	if err != nil {
+		return err
 	}
 
 	if name == "" {
